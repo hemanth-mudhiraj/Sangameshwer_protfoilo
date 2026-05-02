@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import './App.css'
+import fallbackProfilePhoto from './assets/profile_photo.jpeg'
+import fallbackWebsiteLogo from './assets/website_logo.jpeg'
 import {
   defaultAdminCredentials,
   defaultSiteContent,
@@ -123,6 +125,21 @@ function AdminItemActions({ onAdd, onRemove, canRemove, addLabel = 'Add item' })
   )
 }
 
+function SafeImage({ className, src, fallbackSrc, alt }) {
+  return (
+    <img
+      className={className}
+      src={src || fallbackSrc}
+      alt={alt}
+      onError={(event) => {
+        if (event.currentTarget.src !== fallbackSrc) {
+          event.currentTarget.src = fallbackSrc
+        }
+      }}
+    />
+  )
+}
+
 function PublicSite({ content }) {
   const hasRealFormLink = Boolean(content.contact.form)
 
@@ -130,7 +147,12 @@ function PublicSite({ content }) {
     <div className="site-shell">
       <header className="site-header">
         <a className="brand-block" href="#home" aria-label="Go to home">
-          <img className="brand-logo" src={content.branding.logoSrc} alt="K Sangameshwar Sports Psychologist logo" />
+          <SafeImage
+            className="brand-logo"
+            src={content.branding.logoSrc}
+            fallbackSrc={fallbackWebsiteLogo}
+            alt="K Sangameshwar Sports Psychologist logo"
+          />
           <div>
             <p className="brand-name">{content.branding.brandName}</p>
             <p className="brand-tag">{content.branding.brandTag}</p>
@@ -242,7 +264,12 @@ function PublicSite({ content }) {
           <div className="grid two-column-grid">
             <article className="panel-card about-photo-card">
               <div className="about-photo-frame">
-                <img className="about-photo" src={content.branding.profilePhotoSrc} alt="Sports psychologist Sangameshwar" />
+                <SafeImage
+                  className="about-photo"
+                  src={content.branding.profilePhotoSrc}
+                  fallbackSrc={fallbackProfilePhoto}
+                  alt="Sports psychologist Sangameshwar"
+                />
               </div>
             </article>
 
@@ -435,7 +462,12 @@ function PublicSite({ content }) {
         <div className="footer-grid">
           <div className="footer-brand">
             <a className="brand-block footer-brand-block" href="#home" aria-label="Go to home">
-              <img className="brand-logo footer-logo" src={content.branding.logoSrc} alt="K Sangameshwar logo" />
+              <SafeImage
+                className="brand-logo footer-logo"
+                src={content.branding.logoSrc}
+                fallbackSrc={fallbackWebsiteLogo}
+                alt="K Sangameshwar logo"
+              />
               <div>
                 <p className="brand-name">{content.branding.brandName}</p>
                 <p className="brand-tag">{content.branding.brandTag}</p>
