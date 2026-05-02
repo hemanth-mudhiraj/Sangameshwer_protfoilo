@@ -507,6 +507,7 @@ a {
 .authority-copy {
   border-radius: 1.6rem;
   padding: 1.45rem;
+  min-width: 0;
 }
 
 .card-index {
@@ -597,6 +598,7 @@ a {
   color: #dcefff;
   font-weight: 600;
   line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
 .experience-list {
@@ -1227,6 +1229,16 @@ code {
     grid-template-areas: none;
   }
 
+  .about-photo-card,
+  .about-intro-card,
+  .about-specializations-card,
+  .about-sports-card,
+  .about-method-card,
+  .about-experience-card,
+  .about-education-card {
+    grid-area: auto;
+  }
+
   .about-photo-frame,
   .about-photo {
     min-height: 24rem;
@@ -1376,6 +1388,22 @@ code {
     min-height: 18rem;
   }
 
+  .about-photo-frame {
+    display: block;
+  }
+
+  .about-photo {
+    width: 100%;
+    height: 18rem;
+    min-height: 18rem;
+    object-fit: cover;
+    object-position: center top;
+  }
+
+  .about-experience-grid {
+    grid-template-columns: 1fr;
+  }
+
   .pill-list {
     gap: 0.6rem;
   }
@@ -1454,6 +1482,15 @@ code {
 
   .hero-panel::before {
     display: none;
+  }
+
+  .about-photo-frame,
+  .about-photo {
+    min-height: 15.5rem;
+  }
+
+  .about-photo {
+    height: 15.5rem;
   }
 
   .grid,
