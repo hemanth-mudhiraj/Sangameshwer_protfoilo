@@ -1,6 +1,7 @@
 export const SITE_CONTENT_STORAGE_KEY = 'ks-performance-site-content-v1'
 export const SITE_ADMIN_STORAGE_KEY = 'ks-performance-admin-v1'
 export const SITE_ADMIN_SESSION_KEY = 'ks-performance-admin-session-v1'
+export const SITE_REVIEWS_STORAGE_KEY = 'ks-performance-reviews-v1'
 
 export const defaultAdminCredentials = {
   username: 'admin',
@@ -18,6 +19,7 @@ export const defaultSiteContent = {
     { label: 'Home', href: '#home' },
     { label: 'About', href: '#about' },
     { label: 'Programs', href: '#programs' },
+    { label: 'Reviews', href: '#reviews' },
     { label: 'Contact', href: '#contact' },
   ],
   hero: {
@@ -201,6 +203,21 @@ export const defaultSiteContent = {
       },
     ],
   },
+  reviews: {
+    eyebrow: 'Client Reviews',
+    title: 'What athletes say after training with Sangameshwar.',
+    intro:
+      'Real feedback from athletes who used structured mental training to improve confidence, composure, and competition performance.',
+    formTitle: 'Share your experience',
+    formIntro:
+      'If you have trained with Sangameshwar, leave a short review to help other athletes understand the value of the process.',
+    formNameLabel: 'Your name',
+    formRatingLabel: 'Your rating',
+    formMessageLabel: 'Your review',
+    formSubmitLabel: 'Submit Review',
+    formSuccessMessage: 'Thank you. Your review has been added successfully.',
+    listTitle: 'Athlete feedback',
+  },
   contact: {
     eyebrow: 'Contact / Booking',
     title: 'Start Your Mental Training',
@@ -217,3 +234,27 @@ export const defaultSiteContent = {
     copyright: '© 2026 K Sangameshwar | Performance Psychology. All rights reserved.',
   },
 }
+
+export const defaultClientReviews = [
+  {
+    id: 'review-1',
+    name: 'National-Level Swimmer',
+    rating: 5,
+    message:
+      'The sessions helped me stay calm before competition and trust my routines under pressure. My focus in key races became much more stable.',
+  },
+  {
+    id: 'review-2',
+    name: 'Football Athlete',
+    rating: 5,
+    message:
+      'I learned how to reset after mistakes much faster. The mental training felt practical and directly useful during matches.',
+  },
+  {
+    id: 'review-3',
+    name: 'Rehab Athlete',
+    rating: 4,
+    message:
+      'The return-to-sport work gave me confidence after injury and reduced the fear I was carrying into training sessions.',
+  },
+]

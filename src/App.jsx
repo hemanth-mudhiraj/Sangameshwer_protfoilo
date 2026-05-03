@@ -4,10 +4,12 @@ import fallbackProfilePhoto from './assets/profile_photo.jpeg'
 import fallbackWebsiteLogo from './assets/website_logo.jpeg'
 import {
   defaultAdminCredentials,
+  defaultClientReviews,
   defaultSiteContent,
   SITE_ADMIN_SESSION_KEY,
   SITE_ADMIN_STORAGE_KEY,
   SITE_CONTENT_STORAGE_KEY,
+  SITE_REVIEWS_STORAGE_KEY,
 } from './siteConfig'
 
 function clone(value) {
@@ -61,6 +63,29 @@ function normalizeWhatsApp(value) {
   if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) return trimmed
   const digits = trimmed.replace(/\D/g, '')
   return digits ? `https://wa.me/${digits}` : trimmed
+}
+
+function clampRating(value) {
+  const numeric = Number(value)
+  if (Number.isNaN(numeric)) return 5
+  return Math.min(5, Math.max(1, numeric))
+}
+
+function normalizeReview(review, fallbackIndex = 0) {
+  return {
+    id: review.id || `review-${Date.now()}-${fallbackIndex}`,
+    name: review.name?.trim() || 'Anonymous athlete',
+    rating: clampRating(review.rating),
+    message: review.message?.trim() || '',
+  }
+}
+
+function createEmptyReviewForm() {
+  return {
+    name: '',
+    rating: 5,
+    message: '',
+  }
 }
 
 function SectionInput({ label, value, onChange, textarea = false, rows = 4, type = 'text' }) {
@@ -140,7 +165,42 @@ function SafeImage({ className, src, fallbackSrc, alt }) {
   )
 }
 
-function PublicSite({ content }) {
+function StarRating({ rating, interactive = false, onChange, inputName = 'rating' }) {
+  return (
+    <div
+      className={`star-rating${interactive ? ' is-interactive' : ''}`}
+      aria-label={`${rating} out of 5 stars`}
+    >
+      {[1, 2, 3, 4, 5].map((value) =>
+        interactive ? (
+          <label className="star-rating-option" key={value}>
+            <input
+              type="radio"
+              name={inputName}
+              value={value}
+              checked={rating === value}
+              onChange={() => onChange(value)}
+            />
+            <span aria-hidden="true">{value <= rating ? '★' : '☆'}</span>
+          </label>
+        ) : (
+          <span className="star-rating-display" key={value} aria-hidden="true">
+            {value <= rating ? '★' : '☆'}
+          </span>
+        ),
+      )}
+    </div>
+  )
+}
+
+function PublicSite({
+  content,
+  reviews,
+  reviewForm,
+  reviewState,
+  onReviewInputChange,
+  onReviewSubmit,
+}) {
   const hasRealFormLink = Boolean(content.contact.form)
 
   return (
@@ -407,6 +467,83 @@ function PublicSite({ content }) {
                 </a>
               </article>
             ))}
+          </div>
+        </section>
+
+        <section className="content-section reviews-section" id="reviews">
+          <div className="section-heading">
+            <p className="eyebrow">{content.reviews.eyebrow}</p>
+            <h3>{content.reviews.title}</h3>
+            <p className="section-intro">{content.reviews.intro}</p>
+          </div>
+
+          <div className="reviews-layout">
+            <article className="reviews-panel">
+              <div className="reviews-panel-header">
+                <p className="reviews-kicker">{content.reviews.listTitle}</p>
+                <p className="reviews-count">{reviews.length} reviews</p>
+              </div>
+
+              <div className="reviews-grid">
+                {reviews.map((review) => (
+                  <article className="review-card" key={review.id}>
+                    <div className="review-card-header">
+                      <div>
+                        <p className="reviewer-name">{review.name || 'Anonymous athlete'}</p>
+                        <StarRating rating={review.rating} />
+                      </div>
+                    </div>
+                    <p className="review-message">“{review.message}”</p>
+                  </article>
+                ))}
+              </div>
+            </article>
+
+            <article className="review-form-card">
+              <p className="reviews-kicker">{content.reviews.formTitle}</p>
+              <h4>Leave a testimonial</h4>
+              <p>{content.reviews.formIntro}</p>
+
+              <form className="review-form" onSubmit={onReviewSubmit}>
+                <label className="review-field">
+                  <span>{content.reviews.formNameLabel}</span>
+                  <input
+                    type="text"
+                    value={reviewForm.name}
+                    onChange={(event) => onReviewInputChange('name', event.target.value)}
+                    placeholder="Optional"
+                  />
+                </label>
+
+                <fieldset className="review-field review-rating-field">
+                  <legend>{content.reviews.formRatingLabel}</legend>
+                  <StarRating
+                    interactive
+                    rating={reviewForm.rating}
+                    inputName="client-review-rating"
+                    onChange={(value) => onReviewInputChange('rating', value)}
+                  />
+                </fieldset>
+
+                <label className="review-field">
+                  <span>{content.reviews.formMessageLabel}</span>
+                  <textarea
+                    rows={5}
+                    value={reviewForm.message}
+                    onChange={(event) => onReviewInputChange('message', event.target.value)}
+                    placeholder="Share what changed for you through the training process."
+                  />
+                </label>
+
+                {reviewState.message ? (
+                  <p className={`review-form-status is-${reviewState.type}`}>{reviewState.message}</p>
+                ) : null}
+
+                <button className="button button-primary" type="submit">
+                  {content.reviews.formSubmitLabel}
+                </button>
+              </form>
+            </article>
           </div>
         </section>
 
@@ -1088,6 +1225,11 @@ function App() {
   const [isAdminRoute, setIsAdminRoute] = useState(window.location.hash === '#admin')
   const [siteContent, setSiteContent] = useState(() => readStorage(SITE_CONTENT_STORAGE_KEY, defaultSiteContent))
   const [draft, setDraft] = useState(() => readStorage(SITE_CONTENT_STORAGE_KEY, defaultSiteContent))
+  const [reviews, setReviews] = useState(() =>
+    readStorage(SITE_REVIEWS_STORAGE_KEY, defaultClientReviews).map((review, index) =>
+      normalizeReview(review, index),
+    ),
+  )
   const [adminCredentials, setAdminCredentials] = useState(() =>
     readStorage(SITE_ADMIN_STORAGE_KEY, defaultAdminCredentials),
   )
@@ -1097,6 +1239,8 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => readSession(SITE_ADMIN_SESSION_KEY))
   const [loginForm, setLoginForm] = useState({ username: '', password: '' })
   const [authError, setAuthError] = useState('')
+  const [reviewForm, setReviewForm] = useState(() => createEmptyReviewForm())
+  const [reviewState, setReviewState] = useState({ type: '', message: '' })
   const [saveState, setSaveState] = useState({
     type: '',
     message: 'Make changes in the client panel, then click "Save Website Changes".',
@@ -1246,6 +1390,58 @@ function App() {
     setLoginForm({ username: '', password: '' })
   }
 
+  const updateReviewForm = (field, value) => {
+    setReviewForm((current) => ({
+      ...current,
+      [field]: field === 'rating' ? clampRating(value) : value,
+    }))
+
+    if (reviewState.message) {
+      setReviewState({ type: '', message: '' })
+    }
+  }
+
+  const handleReviewSubmit = (event) => {
+    event.preventDefault()
+
+    const message = reviewForm.message.trim()
+
+    if (!message) {
+      setReviewState({
+        type: 'error',
+        message: 'Please add a review message before submitting.',
+      })
+      return
+    }
+
+    const nextReview = normalizeReview(
+      {
+        id: `review-${Date.now()}`,
+        name: reviewForm.name,
+        rating: reviewForm.rating,
+        message,
+      },
+      reviews.length,
+    )
+
+    const nextReviews = [nextReview, ...reviews]
+
+    try {
+      writeStorage(SITE_REVIEWS_STORAGE_KEY, nextReviews)
+      setReviews(nextReviews)
+      setReviewForm(createEmptyReviewForm())
+      setReviewState({
+        type: 'success',
+        message: siteContent.reviews.formSuccessMessage,
+      })
+    } catch {
+      setReviewState({
+        type: 'error',
+        message: 'Review could not be saved in this browser. Please try again.',
+      })
+    }
+  }
+
   if (isAdminRoute) {
     return (
       <>
@@ -1278,7 +1474,16 @@ function App() {
     )
   }
 
-  return <PublicSite content={siteContent} />
+  return (
+    <PublicSite
+      content={siteContent}
+      reviews={reviews}
+      reviewForm={reviewForm}
+      reviewState={reviewState}
+      onReviewInputChange={updateReviewForm}
+      onReviewSubmit={handleReviewSubmit}
+    />
+  )
 }
 
 export default App
