@@ -1385,7 +1385,7 @@ code {
 
   .about-photo-frame,
   .about-photo {
-    min-height: 18rem;
+    min-height: 0;
   }
 
   .about-photo-frame {
@@ -1394,10 +1394,9 @@ code {
 
   .about-photo {
     width: 100%;
-    height: 18rem;
-    min-height: 18rem;
-    object-fit: cover;
-    object-position: center top;
+    height: auto;
+    min-height: 0;
+    object-fit: contain;
   }
 
   .about-experience-grid {
@@ -1486,11 +1485,7 @@ code {
 
   .about-photo-frame,
   .about-photo {
-    min-height: 15.5rem;
-  }
-
-  .about-photo {
-    height: 15.5rem;
+    min-height: 0;
   }
 
   .grid,
