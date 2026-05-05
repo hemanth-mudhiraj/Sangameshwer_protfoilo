@@ -19,8 +19,8 @@ export const defaultSiteContent = {
     { label: 'Home', href: '#home' },
     { label: 'About', href: '#about' },
     { label: 'Programs', href: '#programs' },
-    { label: 'Reviews', href: '#reviews' },
     { label: 'Contact', href: '#contact' },
+    { label: 'Reviews', href: '#reviews' },
   ],
   hero: {
     eyebrow: 'Elite Sports Psychology',
@@ -222,7 +222,7 @@ export const defaultSiteContent = {
     eyebrow: 'Contact / Booking',
     title: 'Start Your Mental Training',
     intro: 'Fill the form below to apply for training.',
-    formLabel: 'Open Application Form',
+    formLabel: 'Book Appointment',
     form: 'https://forms.gle/tcvPXLo9R94DU7sz8',
     whatsapp: 'https://wa.me/919959844001',
     email: 'mailto:kssportspsychologist@gmail.com',

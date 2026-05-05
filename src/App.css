@@ -160,10 +160,58 @@ a {
   row-gap: 0.65rem;
 }
 
+.site-nav-shell {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  min-width: 0;
+}
+
 .site-nav a {
   color: var(--muted);
   font-size: 0.95rem;
   white-space: nowrap;
+}
+
+.site-header-cta {
+  flex-shrink: 0;
+}
+
+.mobile-nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 0.28rem;
+  width: 3rem;
+  height: 3rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.mobile-nav-toggle span {
+  display: block;
+  width: 1.2rem;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+  transition:
+    transform 180ms ease,
+    opacity 180ms ease;
+}
+
+.mobile-nav-toggle.is-open span:nth-child(1) {
+  transform: translateY(0.4rem) rotate(45deg);
+}
+
+.mobile-nav-toggle.is-open span:nth-child(2) {
+  opacity: 0;
+}
+
+.mobile-nav-toggle.is-open span:nth-child(3) {
+  transform: translateY(-0.4rem) rotate(-45deg);
 }
 
 .site-nav a:hover,
@@ -315,6 +363,18 @@ a {
   line-height: 1.7;
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .hero-panel {
   position: relative;
   display: grid;
@@ -418,6 +478,10 @@ a {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
+.who-you-help-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .two-column-grid,
 .contact-layout {
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -516,6 +580,27 @@ a {
   font-weight: 800;
   font-size: 0.92rem;
   letter-spacing: 0.1em;
+}
+
+.who-you-help-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.6rem;
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(circle at top, rgba(243, 179, 61, 0.08), transparent 48%),
+    rgba(255, 255, 255, 0.03);
+  box-shadow: var(--shadow);
+  padding: 0.35rem;
+}
+
+.who-you-help-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: contain;
+  border-radius: 1.3rem;
 }
 
 .info-card h4,
@@ -970,6 +1055,10 @@ a {
     var(--surface-strong);
 }
 
+.contact-primary-action {
+  margin-top: 1.5rem;
+}
+
 .contact-links {
   display: flex;
   flex-wrap: wrap;
@@ -1385,6 +1474,7 @@ code {
   .services-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
 }
 
 @media (max-width: 980px) {
@@ -1398,6 +1488,12 @@ code {
     grid-column: 1 / -1;
     justify-content: flex-start;
     padding-top: 0.25rem;
+  }
+
+  .site-nav-shell {
+    grid-column: 1 / -1;
+    flex-wrap: wrap;
+    justify-content: space-between;
   }
 
   .hero-section {
@@ -1503,9 +1599,10 @@ code {
 
 @media (max-width: 760px) {
   .site-header {
-    flex-direction: column;
-    align-items: flex-start;
-    padding-bottom: 1rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    padding-bottom: 0.9rem;
     gap: 0.9rem;
   }
 
@@ -1522,10 +1619,42 @@ code {
     font-size: 0.88rem;
   }
 
+  .mobile-nav-toggle {
+    display: inline-flex;
+  }
+
+  .site-nav-shell {
+    display: none;
+    grid-column: 1 / -1;
+    width: 100%;
+    padding: 0.9rem;
+    border-radius: 1.2rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(4, 11, 20, 0.86);
+    backdrop-filter: blur(18px);
+    box-sizing: border-box;
+  }
+
+  .site-nav-shell.is-open {
+    display: grid;
+    gap: 0.9rem;
+  }
+
   .site-nav {
     width: 100%;
-    justify-content: flex-start;
-    gap: 0.9rem 1.1rem;
+    display: grid;
+    gap: 0.2rem;
+    justify-content: stretch;
+    padding-top: 0;
+  }
+
+  .site-nav a {
+    display: block;
+    padding: 0.75rem 0.2rem;
+  }
+
+  .site-header-cta {
+    width: 100%;
   }
 
   .hero-section {
@@ -1596,6 +1725,10 @@ code {
 
   .about-photo-card {
     padding: 0.65rem;
+  }
+
+  .who-you-help-image {
+    aspect-ratio: auto;
   }
 
   .reviews-panel-header,
@@ -1717,6 +1850,19 @@ code {
   .footer-grid,
   .reviews-grid {
     gap: 0.95rem;
+  }
+
+  .who-you-help-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.7rem;
+  }
+
+  .who-you-help-card {
+    padding: 0.2rem;
+  }
+
+  .who-you-help-image {
+    aspect-ratio: auto;
   }
 
   .cards-grid,

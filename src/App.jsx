@@ -2,6 +2,10 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import fallbackProfilePhoto from './assets/profile_photo.jpeg'
 import fallbackWebsiteLogo from './assets/website_logo.jpeg'
+import whoYouHelpBuildConsistentConfidenceImage from './assets/who-you-help-build-consistent-confidence-text.png'
+import whoYouHelpOvercomePerformanceAnxietyImage from './assets/who-you-help-overcome-performance-anxiety-text.png'
+import whoYouHelpPerformUnderPressureImage from './assets/who-you-help-perform-under-pressure-text.png'
+import whoYouHelpRecoverMentallyFromInjuryImage from './assets/who-you-help-recover-mentally-from-injury-text.png'
 import {
   defaultAdminCredentials,
   defaultClientReviews,
@@ -16,10 +20,57 @@ function clone(value) {
   return JSON.parse(JSON.stringify(value))
 }
 
+function isPlainObject(value) {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value)
+}
+
+function mergeWithDefaults(defaultValue, storedValue) {
+  if (Array.isArray(defaultValue)) {
+    return Array.isArray(storedValue) ? storedValue : clone(defaultValue)
+  }
+
+  if (isPlainObject(defaultValue)) {
+    const merged = {}
+
+    for (const key of Object.keys(defaultValue)) {
+      merged[key] = mergeWithDefaults(defaultValue[key], storedValue?.[key])
+    }
+
+    return merged
+  }
+
+  return storedValue === undefined ? defaultValue : storedValue
+}
+
+function normalizeNavigation(items) {
+  const storedItems = Array.isArray(items) ? items : []
+
+  return defaultSiteContent.navigation.filter((defaultItem) =>
+    storedItems.some((item) => item?.href === defaultItem.href && item?.label === defaultItem.label),
+  ).length === defaultSiteContent.navigation.length
+    ? storedItems
+    : clone(defaultSiteContent.navigation)
+}
+
+function normalizeSiteContent(value) {
+  const merged = mergeWithDefaults(defaultSiteContent, value)
+  merged.navigation = normalizeNavigation(merged.navigation)
+  if (merged.contact?.formLabel === 'Open Application Form') {
+    merged.contact.formLabel = defaultSiteContent.contact.formLabel
+  }
+  return merged
+}
+
 function readStorage(key, fallback) {
   try {
     const raw = localStorage.getItem(key)
-    return raw ? JSON.parse(raw) : clone(fallback)
+    if (!raw) return clone(fallback)
+
+    const parsed = JSON.parse(raw)
+    if (key === SITE_CONTENT_STORAGE_KEY) {
+      return normalizeSiteContent(parsed)
+    }
+    return mergeWithDefaults(fallback, parsed)
   } catch {
     return clone(fallback)
   }
@@ -202,6 +253,13 @@ function PublicSite({
   onReviewSubmit,
 }) {
   const hasRealFormLink = Boolean(content.contact.form)
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false)
+  const whoYouHelpImages = [
+    whoYouHelpPerformUnderPressureImage,
+    whoYouHelpOvercomePerformanceAnxietyImage,
+    whoYouHelpRecoverMentallyFromInjuryImage,
+    whoYouHelpBuildConsistentConfidenceImage,
+  ]
 
   return (
     <div className="site-shell">
@@ -219,17 +277,40 @@ function PublicSite({
           </div>
         </a>
 
-        <nav className="site-nav" aria-label="Primary">
-          {content.navigation.map((item) => (
-            <a key={item.href} href={item.href}>
-              {item.label}
-            </a>
-          ))}
-        </nav>
+        <button
+          className={`mobile-nav-toggle${isMobileNavOpen ? ' is-open' : ''}`}
+          type="button"
+          aria-expanded={isMobileNavOpen}
+          aria-controls="site-navigation"
+          aria-label="Toggle navigation menu"
+          onClick={() => setIsMobileNavOpen((current) => !current)}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
 
-        <a className="button button-small button-outline" href="#contact">
-          {content.hero.ctaPrimary}
-        </a>
+        <div className={`site-nav-shell${isMobileNavOpen ? ' is-open' : ''}`}>
+          <nav className="site-nav" id="site-navigation" aria-label="Primary">
+            {content.navigation.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={() => setIsMobileNavOpen(false)}
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+
+          <a
+            className="button button-small button-outline site-header-cta"
+            href="#contact"
+            onClick={() => setIsMobileNavOpen(false)}
+          >
+            {content.hero.ctaPrimary}
+          </a>
+        </div>
       </header>
 
       <main>
@@ -282,11 +363,16 @@ function PublicSite({
             <h3>{content.whoYouHelp.title}</h3>
           </div>
 
-          <div className="grid cards-grid">
+          <div className="grid who-you-help-grid">
             {content.whoYouHelp.items.map((item, index) => (
-              <article className="info-card" key={item}>
-                <span className="card-index">{String(index + 1).padStart(2, '0')}</span>
-                <h4>{item}</h4>
+              <article className="who-you-help-card" key={item}>
+                <img
+                  className="who-you-help-image"
+                  src={whoYouHelpImages[index]}
+                  alt={item}
+                  loading="lazy"
+                />
+                <span className="sr-only">{String(index + 1).padStart(2, '0')} {item}</span>
               </article>
             ))}
           </div>
@@ -562,7 +648,7 @@ function PublicSite({
                 for the next steps.
               </p>
               <a
-                className="button button-primary"
+                className="button button-primary contact-primary-action"
                 href={hasRealFormLink ? content.contact.form : '#contact'}
                 target={hasRealFormLink ? '_blank' : undefined}
                 rel={hasRealFormLink ? 'noreferrer' : undefined}
