@@ -212,11 +212,19 @@ export const defaultSiteContent = {
     formIntro:
       'If you have trained with Sangameshwar, leave a short review to help other athletes understand the value of the process.',
     formNameLabel: 'Your name',
+    formSportLabel: 'Your sport',
     formRatingLabel: 'Your rating',
+    formLevelLabel: 'Competition level',
     formMessageLabel: 'Your review',
     formSubmitLabel: 'Submit Review',
     formSuccessMessage: 'Thank you. Your review has been added successfully.',
     listTitle: 'Athlete feedback',
+    levelOptions: [
+      { value: 'beginner', label: 'Beginner', symbol: '●' },
+      { value: 'district', label: 'District level', symbol: '◆' },
+      { value: 'national', label: 'National level', symbol: '▲' },
+      { value: 'international', label: 'International level', symbol: '★' },
+    ],
   },
   contact: {
     eyebrow: 'Contact / Booking',
@@ -239,6 +247,8 @@ export const defaultClientReviews = [
   {
     id: 'review-1',
     name: 'National-Level Swimmer',
+    sport: 'Swimming',
+    level: 'national',
     rating: 5,
     message:
       'The sessions helped me stay calm before competition and trust my routines under pressure. My focus in key races became much more stable.',
@@ -246,6 +256,8 @@ export const defaultClientReviews = [
   {
     id: 'review-2',
     name: 'Football Athlete',
+    sport: 'Football',
+    level: 'district',
     rating: 5,
     message:
       'I learned how to reset after mistakes much faster. The mental training felt practical and directly useful during matches.',
@@ -253,6 +265,8 @@ export const defaultClientReviews = [
   {
     id: 'review-3',
     name: 'Rehab Athlete',
+    sport: 'Track and Field',
+    level: 'beginner',
     rating: 4,
     message:
       'The return-to-sport work gave me confidence after injury and reduced the fear I was carrying into training sessions.',

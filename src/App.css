@@ -919,6 +919,35 @@ a {
   font-weight: 700;
 }
 
+.review-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  margin-top: 0.65rem;
+}
+
+.review-sport {
+  color: #dcefff;
+  font-size: 0.94rem;
+  font-weight: 600;
+}
+
+.review-level-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border-radius: 999px;
+  padding: 0.42rem 0.72rem;
+  background: rgba(117, 227, 193, 0.12);
+  border: 1px solid rgba(117, 227, 193, 0.18);
+  color: var(--success);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 .review-message {
   margin-top: 1rem;
   color: var(--muted);
@@ -1011,6 +1040,54 @@ a {
   padding: 0;
   border: 0;
   margin: 0;
+}
+
+.review-level-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.review-level-option {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border-radius: 999px;
+  padding: 0.72rem 0.95rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--muted);
+  cursor: pointer;
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+.review-level-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.review-level-option:hover,
+.review-level-option:focus-within {
+  transform: translateY(-1px);
+  color: var(--text);
+  border-color: rgba(243, 179, 61, 0.35);
+}
+
+.review-level-option.is-selected {
+  color: #09131d;
+  background: linear-gradient(145deg, var(--accent), var(--accent-strong));
+  border-color: transparent;
+}
+
+.review-level-symbol {
+  font-size: 0.9rem;
+  font-weight: 900;
 }
 
 .review-field input,
@@ -1736,6 +1813,10 @@ code {
     flex-direction: column;
   }
 
+  .review-meta {
+    gap: 0.55rem;
+  }
+
   .reviews-count {
     font-size: 0.9rem;
   }
@@ -1863,6 +1944,15 @@ code {
 
   .who-you-help-image {
     aspect-ratio: auto;
+  }
+
+  .review-level-options {
+    gap: 0.5rem;
+  }
+
+  .review-level-option {
+    width: 100%;
+    justify-content: center;
   }
 
   .cards-grid,

@@ -122,10 +122,17 @@ function clampRating(value) {
   return Math.min(5, Math.max(1, numeric))
 }
 
+function normalizeLevel(value) {
+  const allowedLevels = new Set(defaultSiteContent.reviews.levelOptions.map((option) => option.value))
+  return allowedLevels.has(value) ? value : defaultSiteContent.reviews.levelOptions[0].value
+}
+
 function normalizeReview(review, fallbackIndex = 0) {
   return {
     id: review.id || `review-${Date.now()}-${fallbackIndex}`,
     name: review.name?.trim() || 'Anonymous athlete',
+    sport: review.sport?.trim() || 'Sport not shared',
+    level: normalizeLevel(review.level),
     rating: clampRating(review.rating),
     message: review.message?.trim() || '',
   }
@@ -134,6 +141,8 @@ function normalizeReview(review, fallbackIndex = 0) {
 function createEmptyReviewForm() {
   return {
     name: '',
+    sport: '',
+    level: defaultSiteContent.reviews.levelOptions[0].value,
     rating: 5,
     message: '',
   }
@@ -244,6 +253,31 @@ function StarRating({ rating, interactive = false, onChange, inputName = 'rating
   )
 }
 
+function ReviewLevelSelector({ options, value, onChange }) {
+  return (
+    <div className="review-level-options" role="radiogroup" aria-label="Competition level">
+      {options.map((option) => (
+        <label
+          className={`review-level-option${value === option.value ? ' is-selected' : ''}`}
+          key={option.value}
+        >
+          <input
+            type="radio"
+            name="client-review-level"
+            value={option.value}
+            checked={value === option.value}
+            onChange={() => onChange(option.value)}
+          />
+          <span className="review-level-symbol" aria-hidden="true">
+            {option.symbol}
+          </span>
+          <span>{option.label}</span>
+        </label>
+      ))}
+    </div>
+  )
+}
+
 function PublicSite({
   content,
   reviews,
@@ -253,6 +287,9 @@ function PublicSite({
   onReviewSubmit,
 }) {
   const hasRealFormLink = Boolean(content.contact.form)
+  const reviewLevelMap = Object.fromEntries(
+    content.reviews.levelOptions.map((option) => [option.value, option]),
+  )
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false)
   const whoYouHelpImages = [
     whoYouHelpPerformUnderPressureImage,
@@ -576,6 +613,13 @@ function PublicSite({
                     <div className="review-card-header">
                       <div>
                         <p className="reviewer-name">{review.name || 'Anonymous athlete'}</p>
+                        <div className="review-meta">
+                          <span className="review-sport">{review.sport}</span>
+                          <span className="review-level-badge">
+                            <span aria-hidden="true">{reviewLevelMap[review.level]?.symbol || '●'}</span>
+                            {reviewLevelMap[review.level]?.label || 'Beginner'}
+                          </span>
+                        </div>
                         <StarRating rating={review.rating} />
                       </div>
                     </div>
@@ -601,6 +645,16 @@ function PublicSite({
                   />
                 </label>
 
+                <label className="review-field">
+                  <span>{content.reviews.formSportLabel}</span>
+                  <input
+                    type="text"
+                    value={reviewForm.sport}
+                    onChange={(event) => onReviewInputChange('sport', event.target.value)}
+                    placeholder="Example: Football, Swimming, Cricket"
+                  />
+                </label>
+
                 <fieldset className="review-field review-rating-field">
                   <legend>{content.reviews.formRatingLabel}</legend>
                   <StarRating
@@ -608,6 +662,15 @@ function PublicSite({
                     rating={reviewForm.rating}
                     inputName="client-review-rating"
                     onChange={(value) => onReviewInputChange('rating', value)}
+                  />
+                </fieldset>
+
+                <fieldset className="review-field review-rating-field">
+                  <legend>{content.reviews.formLevelLabel}</legend>
+                  <ReviewLevelSelector
+                    options={content.reviews.levelOptions}
+                    value={reviewForm.level}
+                    onChange={(level) => onReviewInputChange('level', level)}
                   />
                 </fieldset>
 
@@ -1479,7 +1542,12 @@ function App() {
   const updateReviewForm = (field, value) => {
     setReviewForm((current) => ({
       ...current,
-      [field]: field === 'rating' ? clampRating(value) : value,
+      [field]:
+        field === 'rating'
+          ? clampRating(value)
+          : field === 'level'
+            ? normalizeLevel(value)
+            : value,
     }))
 
     if (reviewState.message) {
@@ -1490,7 +1558,16 @@ function App() {
   const handleReviewSubmit = (event) => {
     event.preventDefault()
 
+    const sport = reviewForm.sport.trim()
     const message = reviewForm.message.trim()
+
+    if (!sport) {
+      setReviewState({
+        type: 'error',
+        message: 'Please add your sport before submitting.',
+      })
+      return
+    }
 
     if (!message) {
       setReviewState({
@@ -1504,6 +1581,8 @@ function App() {
       {
         id: `review-${Date.now()}`,
         name: reviewForm.name,
+        sport,
+        level: reviewForm.level,
         rating: reviewForm.rating,
         message,
       },
