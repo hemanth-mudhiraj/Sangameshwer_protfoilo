@@ -6,6 +6,10 @@ import whoYouHelpBuildConsistentConfidenceImage from './assets/who-you-help-buil
 import whoYouHelpOvercomePerformanceAnxietyImage from './assets/who-you-help-overcome-performance-anxiety-text.png'
 import whoYouHelpPerformUnderPressureImage from './assets/who-you-help-perform-under-pressure-text.png'
 import whoYouHelpRecoverMentallyFromInjuryImage from './assets/who-you-help-recover-mentally-from-injury-text.png'
+import serviceInjuryRecoveryMentalTrainingImage from './assets/service-injury-recovery-mental-training-text.png'
+import serviceMentalPerformanceTrainingImage from './assets/service-mental-performance-training-text.png'
+import servicePressureAnxietyControlImage from './assets/service-pressure-anxiety-control-text.png'
+import serviceReturnToCompetitionReadinessImage from './assets/service-return-to-competition-readiness-text.png'
 import {
   defaultAdminCredentials,
   defaultClientReviews,
@@ -297,6 +301,12 @@ function PublicSite({
     whoYouHelpRecoverMentallyFromInjuryImage,
     whoYouHelpBuildConsistentConfidenceImage,
   ]
+  const serviceImages = [
+    serviceMentalPerformanceTrainingImage,
+    servicePressureAnxietyControlImage,
+    serviceInjuryRecoveryMentalTrainingImage,
+    serviceReturnToCompetitionReadinessImage,
+  ]
 
   return (
     <div className="site-shell">
@@ -524,17 +534,24 @@ function PublicSite({
           </div>
         </section>
 
-        <section className="content-section">
+        <section className="content-section services-visual-section">
           <div className="section-heading">
             <p className="eyebrow">{content.services.eyebrow}</p>
             <h3>{content.services.title}</h3>
           </div>
 
-          <div className="grid services-grid">
-            {content.services.items.map((service) => (
-              <article className="service-card" key={service.title}>
-                <h4>{service.title}</h4>
-                <p>{service.description}</p>
+          <div className="grid services-visual-grid">
+            {content.services.items.map((service, index) => (
+              <article className="service-visual-card" key={service.title}>
+                <img
+                  className="service-visual-image"
+                  src={serviceImages[index]}
+                  alt={`${service.title} ${service.description}`}
+                  loading="lazy"
+                />
+                <span className="sr-only">
+                  {service.title}. {service.description}
+                </span>
               </article>
             ))}
           </div>
