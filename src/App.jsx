@@ -673,21 +673,21 @@ function PublicSite({
                 </label>
 
                 <fieldset className="review-field review-rating-field">
+                  <legend>{content.reviews.formLevelLabel}</legend>
+                  <ReviewLevelSelector
+                    options={content.reviews.levelOptions}
+                    value={reviewForm.level}
+                    onChange={(level) => onReviewInputChange('level', level)}
+                  />
+                </fieldset>
+
+                <fieldset className="review-field review-rating-field">
                   <legend>{content.reviews.formRatingLabel}</legend>
                   <StarRating
                     interactive
                     rating={reviewForm.rating}
                     inputName="client-review-rating"
                     onChange={(value) => onReviewInputChange('rating', value)}
-                  />
-                </fieldset>
-
-                <fieldset className="review-field review-rating-field">
-                  <legend>{content.reviews.formLevelLabel}</legend>
-                  <ReviewLevelSelector
-                    options={content.reviews.levelOptions}
-                    value={reviewForm.level}
-                    onChange={(level) => onReviewInputChange('level', level)}
                   />
                 </fieldset>
 
