@@ -62,7 +62,10 @@ function normalizeSiteContent(value) {
   if (merged.contact?.formLabel === 'Open Application Form') {
     merged.contact.formLabel = defaultSiteContent.contact.formLabel
   }
-  if (merged.contact?.email === 'mailto:kssportspsychologist@gmail.com') {
+  if (
+    merged.contact?.email === 'mailto:kssportspsychologist@gmail.com' ||
+    merged.contact?.email?.startsWith('mailto:ks.sportspsychologist@zohomail.in')
+  ) {
     merged.contact.email = defaultSiteContent.contact.email
   }
   return merged
@@ -112,6 +115,7 @@ function lineSplit(text) {
 
 function normalizeEmail(value) {
   if (!value.trim()) return ''
+  if (value.startsWith('http://') || value.startsWith('https://')) return value.trim()
   return value.startsWith('mailto:') ? value : `mailto:${value.trim()}`
 }
 
