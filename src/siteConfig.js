@@ -233,7 +233,8 @@ export const defaultSiteContent = {
     formLabel: 'Book Appointment',
     form: 'https://forms.gle/tcvPXLo9R94DU7sz8',
     whatsapp: 'https://wa.me/919959844001',
-    email: 'mailto:kssportspsychologist@gmail.com',
+    email:
+      'mailto:ks.sportspsychologist@zohomail.in?subject=Sports%20Psychology%20Training%20Enquiry&body=Hi%20Sangameshwar%2C%0A%0AI%20would%20like%20to%20enquire%20about%20mental%20training.%0A%0AName%3A%0ASport%3A%0ALevel%3A%0AMain%20challenge%3A%0APhone%3A',
     formFields: ['Name', 'Age', 'Sport', 'Level', 'Main challenge', 'Phone number', 'Preferred time'],
   },
   footer: {

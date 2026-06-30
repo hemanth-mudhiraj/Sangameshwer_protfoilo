@@ -62,6 +62,9 @@ function normalizeSiteContent(value) {
   if (merged.contact?.formLabel === 'Open Application Form') {
     merged.contact.formLabel = defaultSiteContent.contact.formLabel
   }
+  if (merged.contact?.email === 'mailto:kssportspsychologist@gmail.com') {
+    merged.contact.email = defaultSiteContent.contact.email
+  }
   return merged
 }
 
@@ -110,6 +113,12 @@ function lineSplit(text) {
 function normalizeEmail(value) {
   if (!value.trim()) return ''
   return value.startsWith('mailto:') ? value : `mailto:${value.trim()}`
+}
+
+function linkWindowProps(href) {
+  return href?.startsWith('mailto:') || href?.startsWith('tel:')
+    ? {}
+    : { target: '_blank', rel: 'noreferrer' }
 }
 
 function normalizeWhatsApp(value) {
@@ -752,7 +761,7 @@ function PublicSite({
                 <a href={content.contact.whatsapp} target="_blank" rel="noreferrer">
                   WhatsApp
                 </a>
-                <a href={content.contact.email} target="_blank" rel="noreferrer">
+                <a href={content.contact.email} {...linkWindowProps(content.contact.email)}>
                   Email
                 </a>
               </div>
@@ -807,7 +816,7 @@ function PublicSite({
               <a href={content.contact.whatsapp} target="_blank" rel="noreferrer">
                 WhatsApp
               </a>
-              <a href={content.contact.email} target="_blank" rel="noreferrer">
+              <a href={content.contact.email} {...linkWindowProps(content.contact.email)}>
                 Email
               </a>
               <a href={content.contact.form} target="_blank" rel="noreferrer">
