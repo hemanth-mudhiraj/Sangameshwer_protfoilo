@@ -3,7 +3,6 @@
 Professional portfolio website for a sports psychologist focused on mental conditioning for competitive athletes.
 
 ## Overview
-
 This project is a modern React + Vite portfolio website built for **K Sangameshwar**, a sports psychologist specializing in:
 
 - performance under pressure
